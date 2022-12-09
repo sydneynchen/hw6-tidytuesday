@@ -21,8 +21,6 @@ glimpse(bakers)
 
 ```
 
-Are bakers who are more skilled at the technicals likely to become show winners or show runner ups?
-
 ```{r}
 #| label: create-bakers-age
 
