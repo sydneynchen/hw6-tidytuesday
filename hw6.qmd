@@ -1,0 +1,78 @@
+---
+title: "TidyTuesday HW 6"
+author: "Sydney Chen"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: load-packages
+#| message: false
+
+library(tidyverse)
+library(ggplot2)
+library(knitr)
+library(readr)
+
+bakers <- read_csv("bakers.csv")
+glimpse(bakers)
+
+```
+
+Are bakers who are more skilled at the technicals likely to become show winners or show runner ups?
+
+```{r}
+#| label: create-bakers-age
+
+bakers_age <- bakers |>
+  group_by(series) |>
+  summarize(mean_age = round(mean(age), 0),
+            max_age = max(age),
+            min_age = min(age))
+```
+
+```{r}
+#| label: geom-ribbon
+
+# we have not used geom_ribbon in class before. 
+#We have not added annotations directly to the graph as a legend. 
+
+bakers_age |>
+  ggplot(aes(x = series, y = mean_age)) + 
+  geom_ribbon(aes(ymin = max_age,
+                  ymax = min_age),
+              alpha = 0.2,
+              fill = "blue"
+              ) +
+  geom_line(color = "white",
+            linewidth = 1.5) +
+  geom_line(aes(x = series, y = max_age),
+            linewidth = 1) +
+  geom_line(aes(x = series, y = min_age),
+            linewidth = 1,
+            linetype = "dashed")+
+  geom_point(size = 2) +
+  geom_text(aes(label = mean_age), 
+            size = 3,
+            nudge_x = 0,
+            nudge_y = -2) +
+  scale_x_continuous(breaks = 1:10) +
+  labs(
+    title = "Great British Bakeoff Average Age and Range",
+    subtitle = "Data collected from pilot release in 2010 to 2020 \nwith one series release per year",
+    x = "Series Number",
+    y = "Age in Years",
+    linetype = "Age Range") +
+  theme_minimal() +  
+  annotate("text", x = 1.5, y = 68, label = "Maximum Age", size = 3) +
+  annotate("text", x = 1.5, y = 15, label = "Minimum Age", size = 3) +
+  annotate("text", x = 1.5, y = 42, label = "Average \nAge", size = 3)
+```
+
+```{r}
+#| label: citing-tidy-tuesday
+
+citation("tidytuesdayR")
+```
